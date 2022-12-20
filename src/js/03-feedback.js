@@ -19,10 +19,11 @@ refs.form.addEventListener(`input`, e => {
 });
 
 function onFormSubmit(evt) {
-    evt.preventDefault();fff
+    evt.preventDefault();
     evt.target.reset();
      localStorage.removeItem(STORAGE_KEY);
 }
+
 function onTexteriaInput(evt) {
     const message = evt.target.value;
     localStorage.setItem(STORAGE_KEY, message);
