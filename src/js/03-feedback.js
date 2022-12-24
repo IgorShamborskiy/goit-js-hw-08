@@ -33,10 +33,10 @@ function onTexteriaInput(evt) {
 
 }
 function populateTextaria() {
-    const savedMessage =localStorage.getItem(STORAGE_KEY);
+    const savedMessage =JSON.parse(localStorage.getItem(STORAGE_KEY))
     if (savedMessage) {
-        refs.input.value = savedMessage;
-        refs.textarea.value = savedMessage;
+        refs.input.value = savedMessage.email;
+        refs.textarea.value = savedMessage.message;
     }
    
 }
