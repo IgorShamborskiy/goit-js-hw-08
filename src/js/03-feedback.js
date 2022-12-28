@@ -1,43 +1,34 @@
 import throttle from 'lodash.throttle';
 
-const formData = {};
-const STORAGE_KEY = 'feedback-form-state';
+const LOCALSTORAGE_KEY = 'selectedFilters';
+const formEl = document.querySelector('.feedback-form');
 
-const refs = {
-    form: document.querySelector(`.feedback-form`),
-    input: document.querySelector(`.feedback-form input`),
-    textarea: document.querySelector(`.feedback-form textarea`),
-};
+initForm();
 
-refs.form.addEventListener('submit', onFormSubmit);
-refs.textarea.addEventListener(`input`, throttle(onTexteriaInput, 500));
-
-
-populateTextaria();
-
-
-refs.form.addEventListener(`input`, evt => {
-    formData[evt.target.name] = evt.target.value;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-});
+formEl.addEventListener('submit', onFormSubmit);
+formEl.addEventListener('input', throttle(onFormInput, 500));
 
 function onFormSubmit(evt) {
-    evt.preventDefault();
-    evt.target.reset();
-     localStorage.removeItem(STORAGE_KEY);
+  evt.preventDefault();
+  const formData = new FormData(formEl);
+  formData.forEach((value, name) => console.log(value, name));
+  evt.currentTarget.reset();
+  localStorage.removeItem(LOCALSTORAGE_KEY);
 }
 
-function onTexteriaInput(evt) {
-    const message = evt.target.value;
-    localStorage.setItem(STORAGE_KEY, message);
-
-}
-function populateTextaria() {
-    const savedMessage =JSON.parse(localStorage.getItem(STORAGE_KEY))
-    if (savedMessage) {
-        refs.input.value = savedMessage.email;
-        refs.textarea.value = savedMessage.message;
-    }
-   
+function onFormInput(evt) {
+  let persistedFilters = localStorage.getItem(LOCALSTORAGE_KEY);
+  persistedFilters = persistedFilters ? JSON.parse(persistedFilters) : {};
+  persistedFilters[evt.target.name] = evt.target.value;
+  localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(persistedFilters));
 }
 
+function initForm() {
+  let persistedFilters = localStorage.getItem(LOCALSTORAGE_KEY);
+  if (persistedFilters) {
+    persistedFilters = JSON.parse(persistedFilters);
+    Object.entries(persistedFilters).forEach(([name, value]) => {
+    formEl.elements[name].value = value;
+    });
+  }
+}
